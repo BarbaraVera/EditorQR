@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+/* Reset global scroll — layout handles its own overflow */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+}

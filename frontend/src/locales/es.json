@@ -1,0 +1,72 @@
+{
+  "titulo": "Editor QR",
+  "controles": {
+    "colores": {
+      "modulos": "Módulos",
+      "esquinas": "Esquinas",
+      "fondo": "Fondo"
+    },
+    "forma": {
+      "titulo": "Forma",
+      "opciones": {
+        "redondeado": "Redondeado",
+        "cuadrado": "Cuadrado",
+        "puntos": "Puntos"
+      }
+    },
+    "datos": {
+      "titulo": "Datos QR"
+    },
+    "tamanoExportacion": {
+      "titulo": "Tamaño Exportación",
+      "ancho": "W",
+      "alto": "H"
+    },
+    "fondo": {
+      "titulo": "Fondo",
+      "patron": "Patrón",
+      "subir": "Subir",
+      "limpiar": "Limpiar",
+      "opacidad": "Opacidad"
+    },
+    "logo": {
+      "titulo": "Logo",
+      "placeholder": "Placeholder",
+      "subir": "Subir",
+      "limpiar": "Limpiar",
+      "escala": "Escala",
+      "filtros": "Filtros",
+      "gris": "Gris",
+      "invertir": "Inv",
+      "brillo": "Brillo",
+      "contraste": "Contr"
+    },
+    "capaActiva": {
+      "titulo": "Capa Activa",
+      "ninguna": "(ninguna)",
+      "posicion": "pos",
+      "escala": "escala"
+    },
+    "descarga": {
+      "titulo": "Descargar",
+      "png": "PNG",
+      "jpg": "JPG"
+    },
+    "gradiente": {
+      "activar": "gradiente",
+      "tipo": "Tipo",
+      "rotacion": "Rotación",
+      "lineal": "Lineal",
+      "radial": "Radial",
+      "inicial": "Color Inicial (0%)",
+      "final": "Color Final (100%)"
+    }
+  },
+  "advertencia": {
+    "logoGrande": "El logo es muy grande y puede afectar la lectura del QR"
+  },
+  "selectorIdioma": {
+    "es": "ES",
+    "en": "EN"
+  }
+}
