@@ -294,7 +294,7 @@ function Controls({ canvasRef, isMobile }: {
               </button>
               <label style={{ fontSize: isMobile ? 10 : 11, display: 'flex', alignItems: 'center', gap: 4, marginLeft: 'auto' }}>
                 {t('controles.logo.escala')}
-                <input type="range" min={0.1} max={0.8} step={0.05} value={logo.scale}
+                <input type="range" min={0.1} max={state.logoScaleMax || 0.8} step={0.05} value={logo.scale}
                   onChange={(e) => dispatch({ type: 'SET_LOGO_SCALE', payload: Number(e.target.value) })}
                   style={{ width: isMobile ? 48 : 56 }} />
               </label>

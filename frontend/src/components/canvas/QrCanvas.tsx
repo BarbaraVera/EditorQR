@@ -6,7 +6,7 @@ import type { DotType, Gradient } from 'qr-code-styling'
 import { useQrDesign } from '../../context/QrDesignContext'
 import type { QrShape } from '../../context/QrDesignContext'
 
-const MAX_LOGO_RATIO = 0.25
+const MAX_LOGO_RATIO = 0.40
 
 export type DownloadFormat = 'png' | 'jpeg'
 
@@ -108,8 +108,6 @@ export const QrCanvas = forwardRef<QrCanvasHandle, object>(function QrCanvas(_pr
   const [logoAdvertencia, setLogoAdvertencia] = useState<string | null>(null)
   const stateRef = useRef(state)
   stateRef.current = state
-
-  const logoNaturalWidthRef = useRef(1)
 
   const canvasElRef = useRef<HTMLCanvasElement>(null)
   const fabricRef = useRef<fabric.Canvas | null>(null)
@@ -228,76 +226,13 @@ export const QrCanvas = forwardRef<QrCanvasHandle, object>(function QrCanvas(_pr
 
     /* ── Canvas → State event handlers ──────────────── */
 
-    canvas.on('object:modified', (e) => {
+    canvas.on('selection:created', () => {
       if (isInternalUpdate.current) return
-
-      const target = e.target
-      if (!target) return
-
-      if (target === logoImageRef.current) {
-        const s = stateRef.current
-        const escalaMaxima = MAX_LOGO_RATIO * s.dimensions.width / (logoNaturalWidthRef.current ?? 1)
-        const escalaSegura = Math.min(target.scaleX ?? 1, escalaMaxima)
-
-        if ((target.scaleX ?? 1) !== escalaSegura) {
-          target.set({ scaleX: escalaSegura, scaleY: escalaSegura })
-          target.setCoords()
-        }
-
-        const umbralAdvertencia = escalaMaxima * 0.8
-        if (escalaSegura > umbralAdvertencia) {
-          setLogoAdvertencia(t('advertencia.logoGrande'))
-        } else {
-          setLogoAdvertencia(null)
-        }
-
-        isInternalUpdate.current = true
-        dispatch({
-          type: 'SET_LOGO_POSITION',
-          payload: { left: target.left ?? 0, top: target.top ?? 0 },
-        })
-        dispatch({
-          type: 'SET_LOGO_SCALE',
-          payload: escalaSegura,
-        })
-        canvas.renderAll()
-      }
-    })
-
-    canvas.on('object:scaling', (e) => {
-      if (isInternalUpdate.current) return
-
-      const target = e.target
-      if (!target) return
-
-      if (target === logoImageRef.current) {
-        const s = stateRef.current
-        const escalaMaxima = MAX_LOGO_RATIO * s.dimensions.width / (logoNaturalWidthRef.current ?? 1)
-        const escalaClamp = Math.min(target.scaleX ?? 1, escalaMaxima)
-
-        if ((target.scaleX ?? 1) !== escalaClamp) {
-          target.set({ scaleX: escalaClamp, scaleY: escalaClamp })
-          target.setCoords()
-        }
-      }
-    })
-
-    canvas.on('selection:created', (e) => {
-      if (isInternalUpdate.current) return
-
-      const selected = e.selected?.[0]
-      if (!selected) return
-
-      if (selected === logoImageRef.current) {
-        dispatch({ type: 'SET_ACTIVE_LAYER', payload: 'logo-1' })
-      } else {
-        dispatch({ type: 'SET_ACTIVE_LAYER', payload: 'qr-1' })
-      }
+      dispatch({ type: 'SET_ACTIVE_LAYER', payload: 'qr-1' })
     })
 
     canvas.on('selection:cleared', () => {
       if (isInternalUpdate.current) return
-
       dispatch({ type: 'SET_ACTIVE_LAYER', payload: null })
     })
 
@@ -447,19 +382,31 @@ export const QrCanvas = forwardRef<QrCanvasHandle, object>(function QrCanvas(_pr
           logoImg.applyFilters()
         }
 
+        const escalaMax = MAX_LOGO_RATIO * expectedW / (logoImg.width ?? 1)
+        const escalaSegura = Math.min(logo.scale, escalaMax)
+        dispatch({ type: 'SET_LOGO_SCALE_MAX', payload: escalaMax })
+
         logoImg.set({
-          left: dimensions.width / 2 + margin,
-          top: dimensions.height / 2 + margin,
+          left: expectedW / 2,
+          top: expectedH / 2,
           originX: 'center',
           originY: 'center',
-          scaleX: logo.scale,
-          scaleY: logo.scale,
-          selectable: true,
-          evented: true,
+          scaleX: escalaSegura,
+          scaleY: escalaSegura,
+          selectable: false,
+          evented: false,
         })
         canvas.add(logoImg)
-        logoNaturalWidthRef.current = logoImg.width ?? 1
         logoImageRef.current = logoImg
+
+        const anchoEscalado = escalaSegura * (logoImg.width ?? 1)
+        const limiteMaximo = MAX_LOGO_RATIO * expectedW
+        setLogoAdvertencia(anchoEscalado > limiteMaximo * 1 ? t('advertencia.logoGrande') : null)
+        if (escalaSegura !== logo.scale) {
+          dispatch({ type: 'SET_LOGO_SCALE', payload: escalaSegura })
+        }
+      } else {
+        setLogoAdvertencia(null)
       }
 
       canvas.renderAll()

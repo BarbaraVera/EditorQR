@@ -65,6 +65,7 @@ export interface QrDesignState {
   margin: number
   layers: QrLayer[]
   activeLayerId: string | null
+  logoScaleMax: number
 }
 
 /* ─── Initial state ─────────────────────────────────── */
@@ -110,6 +111,7 @@ const initialState: QrDesignState = {
     { id: 'logo-1', name: 'Logo', type: 'logo', visible: true, locked: false, opacity: 1 },
   ],
   activeLayerId: 'qr-1',
+  logoScaleMax: 1,
 }
 
 /* ─── Actions ───────────────────────────────────────── */
@@ -134,6 +136,7 @@ export type QrDesignAction =
   | { type: 'TOGGLE_LAYER_VISIBILITY'; payload: string }
   | { type: 'TOGGLE_LAYER_LOCK'; payload: string }
   | { type: 'SET_LAYER_OPACITY'; payload: { id: string; opacity: number } }
+  | { type: 'SET_LOGO_SCALE_MAX'; payload: number }
 
 /* ─── Reducer ───────────────────────────────────────── */
 
@@ -156,6 +159,9 @@ function qrDesignReducer(
 
     case 'SET_LOGO_SCALE':
       return { ...state, logo: { ...state.logo, scale: action.payload } }
+
+    case 'SET_LOGO_SCALE_MAX':
+      return { ...state, logoScaleMax: action.payload }
 
     case 'SET_LOGO_POSITION':
       return { ...state, logo: { ...state.logo, ...action.payload } }
