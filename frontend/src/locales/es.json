@@ -1,6 +1,7 @@
 {
   "titulo": "EditorQR",
   "controles": {
+    "errorArchivoGrande": "El archivo supera el límite de 5 MB",
     "colores": {
       "modulos": "Módulos",
       "esquinas": "Esquinas",
@@ -15,7 +16,8 @@
       }
     },
     "datos": {
-      "titulo": "Datos QR"
+      "titulo": "Datos QR",
+      "vacio": "Ingresa un texto o URL para generar el QR"
     },
     "tamanoExportacion": {
       "titulo": "Tamaño Exportación",
@@ -38,6 +40,7 @@
       "vistaPrevia": "Vista previa del logo",
       "quitarFondo": "Quitar fondo del logo",
       "procesando": "Procesando...",
+      "errorRemocionFondo": "Fallo al quitar el fondo. Intenta con otra imagen.",
       "filtros": "Filtros",
       "gris": "Gris",
       "invertir": "Inv",
