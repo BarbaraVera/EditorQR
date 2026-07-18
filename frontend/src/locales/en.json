@@ -1,6 +1,7 @@
 {
   "titulo": "EditorQR",
   "controles": {
+    "errorArchivoGrande": "File exceeds the 5 MB limit",
     "colores": {
       "modulos": "Modules",
       "esquinas": "Corners",
@@ -15,7 +16,8 @@
       }
     },
     "datos": {
-      "titulo": "QR Data"
+      "titulo": "QR Data",
+      "vacio": "Enter text or a URL to generate the QR"
     },
     "tamanoExportacion": {
       "titulo": "Export Size",
@@ -38,6 +40,7 @@
       "vistaPrevia": "Logo preview",
       "quitarFondo": "Remove logo background",
       "procesando": "Processing...",
+      "errorRemocionFondo": "Background removal failed.",
       "filtros": "Filters",
       "gris": "Gray",
       "invertir": "Inv",

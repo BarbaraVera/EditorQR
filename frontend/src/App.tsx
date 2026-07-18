@@ -137,15 +137,29 @@ function Controls({ canvasRef, isMobile }: {
   const { colors, shape, logo, logoFilters, backgroundImage, quitarFondo } = state
   const logoFileRef = useRef<HTMLInputElement>(null)
   const bgFileRef = useRef<HTMLInputElement>(null)
+  const [errorArchivo, setErrorArchivo] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!errorArchivo) return
+    const timer = setTimeout(() => setErrorArchivo(null), 4000)
+    return () => clearTimeout(timer)
+  }, [errorArchivo])
 
   const alternarIdioma = () => {
     i18n.changeLanguage(i18n.language === 'es' ? 'en' : 'es')
   }
 
+  const MAX_FILE_SIZE_FRONTEND = 5 * 1024 * 1024
+
   const manejarArchivo = (accion: (url: string) => void) => {
     return (e: React.ChangeEvent<HTMLInputElement>) => {
+      setErrorArchivo(null)
       const file = e.target.files?.[0]
       if (!file) return
+      if (file.size > MAX_FILE_SIZE_FRONTEND) {
+        setErrorArchivo(t('controles.errorArchivoGrande'))
+        return
+      }
       const reader = new FileReader()
       reader.onload = () => accion(reader.result as string)
       reader.readAsDataURL(file)
@@ -191,6 +205,26 @@ function Controls({ canvasRef, isMobile }: {
 
   return (
     <>
+      {/* Toast flotante de error */}
+      {errorArchivo && (
+        <div style={{
+          position: 'fixed',
+          top: 16,
+          right: 16,
+          zIndex: 9999,
+          maxWidth: 360,
+          padding: '12px 20px',
+          borderRadius: 10,
+          background: '#FF6B6B',
+          color: '#fff',
+          fontSize: 14,
+          fontWeight: 500,
+          lineHeight: 1.4,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+          pointerEvents: 'none',
+          animation: 'slideIn 0.2s ease-out',
+        }}>{errorArchivo}</div>
+      )}
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h1 style={{ margin: 0, fontSize: isMobile ? 15 : 18, color: '#E8EDF5', fontWeight: 600, letterSpacing: '-0.02em' }}>{t('titulo')}</h1>
         <button onClick={alternarIdioma} aria-label={i18n.language === 'es' ? 'Switch to English' : 'Cambiar a español'} style={botonIdioma}>
@@ -229,9 +263,22 @@ function Controls({ canvasRef, isMobile }: {
       {/* ── Data / Datos QR ── */}
       <fieldset style={fieldsetStyle(isMobile)}>
         <legend style={legendStyle(isMobile)}>{t('controles.datos.titulo')}</legend>
-        <input type="text" value={state.qrData}
-          onChange={(e) => dispatch({ type: 'SET_QR_DATA', payload: e.target.value })}
-          style={inputStyle(isMobile)} />
+        <input type="text" value={state.qrData} placeholder="https://ejemplo.com"
+          onChange={(e) => {
+            const limpio = e.target.value
+              .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '')
+              .slice(0, 2000)
+            dispatch({ type: 'SET_QR_DATA', payload: limpio })
+          }}
+          style={{
+            ...inputStyle(isMobile),
+            borderColor: state.qrData.trim() ? undefined : '#FFB347',
+          }} />
+        {!state.qrData.trim() && (
+          <p style={{ margin: '4px 0 0', fontSize: isMobile ? 10 : 11, color: '#FFB347' }}>
+            {t('controles.datos.vacio')}
+          </p>
+        )}
       </fieldset>
 
       {/* ── Export Size / Tamaño Exportación ── */}

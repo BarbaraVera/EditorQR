@@ -107,8 +107,15 @@ export const QrCanvas = forwardRef<QrCanvasHandle, object>(function QrCanvas(_pr
 
   const [logoAdvertencia, setLogoAdvertencia] = useState<string | null>(null)
   const [procesandoFondo, setProcesandoFondo] = useState(false)
+  const [errorRemocionFondo, setErrorRemocionFondo] = useState<string | null>(null)
   const stateRef = useRef(state)
   stateRef.current = state
+
+  useEffect(() => {
+    if (!errorRemocionFondo) return
+    const timer = setTimeout(() => setErrorRemocionFondo(null), 5000)
+    return () => clearTimeout(timer)
+  }, [errorRemocionFondo])
 
   const canvasElRef = useRef<HTMLCanvasElement>(null)
   const fabricRef = useRef<fabric.Canvas | null>(null)
@@ -121,6 +128,8 @@ export const QrCanvas = forwardRef<QrCanvasHandle, object>(function QrCanvas(_pr
   useImperativeHandle(ref, () => ({
     async download(format, quality) {
       const s = stateRef.current
+
+      if (!s.qrData.trim()) return
 
       const exportW = s.exportDimensions.width
       const exportH = s.exportDimensions.height
@@ -275,9 +284,14 @@ export const QrCanvas = forwardRef<QrCanvasHandle, object>(function QrCanvas(_pr
     if (!s.logo.originalDataUrl) return
 
     setProcesandoFondo(true)
+
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 35000)
+
     try {
       const blobResp = await fetch('/api/remove-bg', {
         method: 'POST',
+        signal: controller.signal,
         body: (() => {
           const parts = s.logo.originalDataUrl!.split(',')
           const byteString = atob(parts[1]!)
@@ -290,7 +304,13 @@ export const QrCanvas = forwardRef<QrCanvasHandle, object>(function QrCanvas(_pr
           return fd
         })(),
       })
-      if (!blobResp.ok) return
+      clearTimeout(timeoutId)
+
+      if (!blobResp.ok) {
+        setProcesandoFondo(false)
+        setErrorRemocionFondo(t('controles.logo.errorRemocionFondo'))
+        return
+      }
 
       const resultBlob = await blobResp.blob()
       const reader = new FileReader()
@@ -303,6 +323,7 @@ export const QrCanvas = forwardRef<QrCanvasHandle, object>(function QrCanvas(_pr
       reader.readAsDataURL(resultBlob)
     } catch {
       setProcesandoFondo(false)
+      setErrorRemocionFondo(t('controles.logo.errorRemocionFondo'))
     }
   }
 
@@ -368,12 +389,23 @@ export const QrCanvas = forwardRef<QrCanvasHandle, object>(function QrCanvas(_pr
       }
 
       /* ── QR base image ────────────────────────────────── */
+      const datosLimpios = qrData.trim()
+      if (!datosLimpios) {
+        if (qrImageRef.current) {
+          canvas.remove(qrImageRef.current)
+          qrImageRef.current.dispose()
+          qrImageRef.current = null
+        }
+        canvas.renderAll()
+        return
+      }
+
       const qrOpts = dotsOptions(colors, shape)
 
       const qrCode = new QRCodeStyling({
         width: dimensions.width,
         height: dimensions.height,
-        data: qrData,
+        data: datosLimpios,
         qrOptions: {
           errorCorrectionLevel: logo.dataUrl ? 'H' : 'M',
         },
@@ -477,6 +509,25 @@ export const QrCanvas = forwardRef<QrCanvasHandle, object>(function QrCanvas(_pr
 
   return (
     <>
+      {errorRemocionFondo && (
+        <div style={{
+          position: 'fixed',
+          top: 64,
+          right: 16,
+          zIndex: 9999,
+          maxWidth: 360,
+          padding: '12px 20px',
+          borderRadius: 10,
+          background: '#FF6B6B',
+          color: '#fff',
+          fontSize: 13,
+          fontWeight: 500,
+          lineHeight: 1.4,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+          pointerEvents: 'none',
+          animation: 'slideIn 0.2s ease-out',
+        }}>{errorRemocionFondo}</div>
+      )}
       <div style={{ position: 'relative', display: 'inline-block', overflow: 'hidden', borderRadius: 8 }} role="img" aria-label="Vista previa del código QR personalizado">
         <canvas
           ref={canvasElRef}
