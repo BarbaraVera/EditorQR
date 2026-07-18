@@ -35,6 +35,8 @@
       "subir": "Upload",
       "limpiar": "Clear",
       "escala": "Scale",
+      "quitarFondo": "Remove logo background",
+      "procesando": "Processing...",
       "filtros": "Filters",
       "gris": "Gray",
       "invertir": "Inv",

@@ -133,7 +133,7 @@ function Controls({ canvasRef, isMobile }: {
 }) {
   const { t, i18n } = useTranslation()
   const { state, dispatch } = useQrDesign()
-  const { colors, shape, logo, logoFilters, backgroundImage } = state
+  const { colors, shape, logo, logoFilters, backgroundImage, quitarFondo } = state
   const logoFileRef = useRef<HTMLInputElement>(null)
   const bgFileRef = useRef<HTMLInputElement>(null)
 
@@ -156,7 +156,7 @@ function Controls({ canvasRef, isMobile }: {
       <rect width="120" height="120" rx="16" fill="#6366f1"/>
       <text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" fill="white" font-size="40" font-family="sans-serif" font-weight="bold">LOGO</text>
     </svg>`
-    dispatch({ type: 'SET_LOGO_DATA', payload: `data:image/svg+xml;base64,${btoa(svg)}` })
+    dispatch({ type: 'SET_LOGO_ORIGINAL', payload: `data:image/svg+xml;base64,${btoa(svg)}` })
   }
 
   const manejarFondoPlaceholder = () => {
@@ -282,13 +282,16 @@ function Controls({ canvasRef, isMobile }: {
           <button onClick={() => logoFileRef.current?.click()} style={btnStyle('#22c55e', isMobile)}>{t('controles.logo.subir')}</button>
         </div>
         <input ref={logoFileRef} type="file" accept="image/*"
-          onChange={manejarArchivo((url) => dispatch({ type: 'SET_LOGO_DATA', payload: url }))}
+          onChange={manejarArchivo((url) => dispatch({ type: 'SET_LOGO_ORIGINAL', payload: url }))}
           style={{ display: 'none' }} />
         {logo.dataUrl && (
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
               <img src={logo.dataUrl} alt="logo" style={{ width: isMobile ? 28 : 36, height: isMobile ? 28 : 36, borderRadius: 4, objectFit: 'cover' }} />
-              <button onClick={() => dispatch({ type: 'SET_LOGO_DATA', payload: null })}
+              <button onClick={() => {
+                dispatch({ type: 'SET_LOGO_ORIGINAL', payload: null })
+                dispatch({ type: 'SET_QUITAR_FONDO', payload: false })
+              }}
                 style={{ padding: '3px 8px', borderRadius: 6, border: '1px solid #ef4444', background: 'transparent', color: '#ef4444', cursor: 'pointer', fontSize: isMobile ? 10 : 11 }}>
                 {t('controles.logo.limpiar')}
               </button>
@@ -297,6 +300,11 @@ function Controls({ canvasRef, isMobile }: {
                 <input type="range" min={0.1} max={state.logoScaleMax || 0.8} step={0.05} value={logo.scale}
                   onChange={(e) => dispatch({ type: 'SET_LOGO_SCALE', payload: Number(e.target.value) })}
                   style={{ width: isMobile ? 48 : 56 }} />
+              </label>
+              <label style={{ fontSize: isMobile ? 10 : 11, display: 'flex', alignItems: 'center', gap: 4, marginTop: 4 }}>
+                <input type="checkbox" checked={quitarFondo}
+                  onChange={(e) => dispatch({ type: 'SET_QUITAR_FONDO', payload: e.target.checked })} />
+                {t('controles.logo.quitarFondo')}
               </label>
             </div>
 

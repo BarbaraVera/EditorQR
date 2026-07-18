@@ -103,9 +103,10 @@ function buildFilters(logoFilters: {
 export const QrCanvas = forwardRef<QrCanvasHandle, object>(function QrCanvas(_props, ref) {
   const { t } = useTranslation()
   const { state, dispatch } = useQrDesign()
-  const { qrData, shape, colors, dimensions, margin, logo, logoFilters, backgroundImage } = state
+  const { qrData, shape, colors, dimensions, margin, logo, logoFilters, backgroundImage, quitarFondo } = state
 
   const [logoAdvertencia, setLogoAdvertencia] = useState<string | null>(null)
+  const [procesandoFondo, setProcesandoFondo] = useState(false)
   const stateRef = useRef(state)
   stateRef.current = state
 
@@ -184,6 +185,7 @@ export const QrCanvas = forwardRef<QrCanvasHandle, object>(function QrCanvas(_pr
             originX: 'center', originY: 'center',
             scaleX: scaleRatio, scaleY: scaleRatio,
             selectable: false, evented: false,
+            imageSmoothing: true,
           })
           tempCanvas.add(logoImg)
         }
@@ -267,6 +269,59 @@ export const QrCanvas = forwardRef<QrCanvasHandle, object>(function QrCanvas(_pr
     logo.dataUrl, logo.scale,
     logoFilters, backgroundImage.dataUrl, backgroundImage.opacity,
   ])
+
+  async function procesarRemocionFondo() {
+    const s = stateRef.current
+    if (!s.logo.originalDataUrl) return
+
+    setProcesandoFondo(true)
+    try {
+      const blobResp = await fetch('/api/remove-bg', {
+        method: 'POST',
+        body: (() => {
+          const parts = s.logo.originalDataUrl!.split(',')
+          const byteString = atob(parts[1]!)
+          const ab = new ArrayBuffer(byteString.length)
+          const ia = new Uint8Array(ab)
+          for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i)
+          const blob = new Blob([ab], { type: 'image/png' })
+          const fd = new FormData()
+          fd.append('file', blob, 'logo.png')
+          return fd
+        })(),
+      })
+      if (!blobResp.ok) return
+
+      const resultBlob = await blobResp.blob()
+      const reader = new FileReader()
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          dispatch({ type: 'SET_LOGO_DATA', payload: reader.result })
+        }
+        setProcesandoFondo(false)
+      }
+      reader.readAsDataURL(resultBlob)
+    } catch {
+      setProcesandoFondo(false)
+    }
+  }
+
+  function restaurarLogoOriginal() {
+    const s = stateRef.current
+    if (s.logo.originalDataUrl) {
+      dispatch({ type: 'SET_LOGO_DATA', payload: s.logo.originalDataUrl })
+    }
+  }
+
+  useEffect(() => {
+    if (!logo.originalDataUrl) return
+    if (quitarFondo) {
+      procesarRemocionFondo()
+    } else {
+      restaurarLogoOriginal()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quitarFondo])
 
   async function syncStateToCanvas(canvas: fabric.Canvas, syncId: number) {
     try {
@@ -422,13 +477,23 @@ export const QrCanvas = forwardRef<QrCanvasHandle, object>(function QrCanvas(_pr
 
   return (
     <>
-      <canvas
-        ref={canvasElRef}
-        width={canvasW}
-        height={canvasH}
-        className="max-w-full max-h-full"
-        style={{ border: '1px solid #ccc', borderRadius: 8 }}
-      />
+      <div style={{ position: 'relative', display: 'inline-block' }}>
+        <canvas
+          ref={canvasElRef}
+          width={canvasW}
+          height={canvasH}
+          className="max-w-full max-h-full"
+          style={{ border: '1px solid #ccc', borderRadius: 8 }}
+        />
+        {procesandoFondo && (
+          <div style={{
+            position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: 'rgba(0,0,0,0.45)', borderRadius: 8, color: '#fff', fontSize: 14, fontWeight: 600,
+          }}>
+            {t('controles.logo.procesando')}
+          </div>
+        )}
+      </div>
       {logoAdvertencia && (
         <p style={{ color: '#f59e0b', fontSize: 12, margin: '6px 0 0', textAlign: 'center' }}>
           {logoAdvertencia}

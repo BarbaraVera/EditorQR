@@ -22,6 +22,7 @@ export interface QrColors {
 
 export interface LogoState {
   dataUrl: string | null
+  originalDataUrl: string | null
   scale: number
   left: number
   top: number
@@ -66,6 +67,7 @@ export interface QrDesignState {
   layers: QrLayer[]
   activeLayerId: string | null
   logoScaleMax: number
+  quitarFondo: boolean
 }
 
 /* ─── Initial state ─────────────────────────────────── */
@@ -83,6 +85,7 @@ const initialState: QrDesignState = {
   },
   logo: {
     dataUrl: null,
+    originalDataUrl: null,
     scale: 0.3,
     left: 0,
     top: 0,
@@ -112,6 +115,7 @@ const initialState: QrDesignState = {
   ],
   activeLayerId: 'qr-1',
   logoScaleMax: 1,
+  quitarFondo: false,
 }
 
 /* ─── Actions ───────────────────────────────────────── */
@@ -137,6 +141,8 @@ export type QrDesignAction =
   | { type: 'TOGGLE_LAYER_LOCK'; payload: string }
   | { type: 'SET_LAYER_OPACITY'; payload: { id: string; opacity: number } }
   | { type: 'SET_LOGO_SCALE_MAX'; payload: number }
+  | { type: 'SET_LOGO_ORIGINAL'; payload: string | null }
+  | { type: 'SET_QUITAR_FONDO'; payload: boolean }
 
 /* ─── Reducer ───────────────────────────────────────── */
 
@@ -154,8 +160,18 @@ function qrDesignReducer(
     case 'SET_COLORS':
       return { ...state, colors: { ...state.colors, ...action.payload } }
 
+    case 'SET_LOGO_ORIGINAL':
+      return {
+        ...state,
+        logo: { ...state.logo, originalDataUrl: action.payload, dataUrl: action.payload },
+        quitarFondo: false,
+      }
+
     case 'SET_LOGO_DATA':
       return { ...state, logo: { ...state.logo, dataUrl: action.payload } }
+
+    case 'SET_QUITAR_FONDO':
+      return { ...state, quitarFondo: action.payload }
 
     case 'SET_LOGO_SCALE':
       return { ...state, logo: { ...state.logo, scale: action.payload } }
