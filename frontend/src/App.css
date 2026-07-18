@@ -1,7 +1,61 @@
+@import "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap";
 @import "tailwindcss";
 
-/* Reset global scroll — layout handles its own overflow */
+@theme {
+  --color-deep: #0A0D14;
+  --color-elevated: #131823;
+  --color-card: #1D2535;
+  --color-border: #2A3040;
+  --color-accent: #00D4AA;
+  --color-accent-secondary: #7C5CFC;
+  --color-text-primary: #E8EDF5;
+  --color-text-secondary: #8892A8;
+  --color-danger: #FF6B6B;
+  --color-warning: #FFB347;
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+}
+
 html, body, #root {
   margin: 0;
   padding: 0;
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(42, 48, 64, 0.25) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(42, 48, 64, 0.25) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+@keyframes scan {
+  0% { top: 0; opacity: 0; }
+  8% { opacity: 1; }
+  92% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+.scan-line {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00D4AA, transparent);
+  box-shadow: 0 0 8px rgba(0, 212, 170, 0.4), 0 0 24px rgba(0, 212, 170, 0.15);
+  animation: scan 3.5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 10;
+}
+
+aside::-webkit-scrollbar {
+  width: 5px;
+}
+aside::-webkit-scrollbar-track {
+  background: transparent;
+}
+aside::-webkit-scrollbar-thumb {
+  background: #2A3040;
+  border-radius: 3px;
+}
+aside::-webkit-scrollbar-thumb:hover {
+  background: #3A4050;
 }
