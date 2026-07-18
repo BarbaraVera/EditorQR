@@ -1,5 +1,5 @@
 {
-  "titulo": "QR Editor",
+  "titulo": "EditorQR",
   "controles": {
     "colores": {
       "modulos": "Modules",
@@ -35,6 +35,7 @@
       "subir": "Upload",
       "limpiar": "Clear",
       "escala": "Scale",
+      "vistaPrevia": "Logo preview",
       "quitarFondo": "Remove logo background",
       "procesando": "Processing...",
       "filtros": "Filters",
@@ -64,6 +65,7 @@
       "final": "End Color (100%)"
     }
   },
+  "ultimaActualizacion": "Updated {{fecha}}",
   "advertencia": {
     "logoGrande": "Logo is too large and may affect QR readability"
   },

@@ -1,0 +1,35 @@
+# EditorQR
+
+EditorQR is an open-source web tool for creating and customizing QR codes visually. It runs entirely in the browser with an optional Python backend for AI-powered logo background removal.
+
+## What it does
+
+Users can customize every aspect of a QR code: colors, gradients (linear/radial), module shapes (rounded, square, dots), background images with opacity control, and logo overlays with filters (grayscale, invert, brightness, contrast). The canvas preview updates in real time. Export is available as PNG or JPEG up to 4000px.
+
+## Key features
+
+- Real-time Fabric.js canvas preview
+- Gradient support (linear/radial, 2 stops)
+- Background image with opacity slider
+- Logo upload with scale control, filters, and AI background removal
+- Error correction level auto-selects H (highest) when a logo is present
+- Export at custom dimensions up to 4000px
+- Responsive layout (desktop sidebar + mobile stacked)
+- Spanish and English UI (i18next)
+
+## Tech stack
+
+- Frontend: React 19, TypeScript 6, Vite 8, Tailwind CSS 4, Fabric.js 6
+- QR generation: qr-code-styling 1.9
+- Backend: FastAPI (Python), rembg (U2Net model for background removal)
+- Font: Plus Jakarta Sans
+- State management: React useReducer with strict TypeScript types
+
+## Pages
+
+- Home / Editor: https://editorqr.app/ — the main QR code editor interface
+- (Single-page application, all functionality lives at /)
+
+## Pricing
+
+Free and open-source. Self-hosted. No paid tiers, no accounts, no data collection.

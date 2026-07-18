@@ -191,12 +191,12 @@ function Controls({ canvasRef, isMobile }: {
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2 style={{ margin: 0, fontSize: isMobile ? 15 : 18, color: '#E8EDF5', fontWeight: 600, letterSpacing: '-0.02em' }}>{t('titulo')}</h2>
-        <button onClick={alternarIdioma} style={botonIdioma}>
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1 style={{ margin: 0, fontSize: isMobile ? 15 : 18, color: '#E8EDF5', fontWeight: 600, letterSpacing: '-0.02em' }}>{t('titulo')}</h1>
+        <button onClick={alternarIdioma} aria-label={i18n.language === 'es' ? 'Switch to English' : 'Cambiar a español'} style={botonIdioma}>
           {i18n.language === 'es' ? t('selectorIdioma.en') : t('selectorIdioma.es')}
         </button>
-      </div>
+      </header>
 
       <ColorRow label={t('controles.colores.modulos')} color={colors.primary} compact={isMobile}
         onChange={(v) => dispatch({ type: 'SET_COLORS', payload: { primary: v } })} />
@@ -289,7 +289,7 @@ function Controls({ canvasRef, isMobile }: {
         {logo.dataUrl && (
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-              <img src={logo.dataUrl} alt="logo" style={{ width: isMobile ? 28 : 36, height: isMobile ? 28 : 36, borderRadius: 4, objectFit: 'cover' }} />
+              <img src={logo.dataUrl} alt={t('controles.logo.vistaPrevia')} style={{ width: isMobile ? 28 : 36, height: isMobile ? 28 : 36, borderRadius: 4, objectFit: 'cover' }} />
               <button onClick={() => {
                 dispatch({ type: 'SET_LOGO_ORIGINAL', payload: null })
                 dispatch({ type: 'SET_QUITAR_FONDO', payload: false })
@@ -406,15 +406,20 @@ function ColorRow({ label, color, compact, onChange, noMargin }: {
 /* ─── Playground Layout ────────────────────────────── */
 
 function Playground() {
+  const { t } = useTranslation()
   const canvasRef = useRef<QrCanvasHandle>(null)
   const isMobile = useIsMobile()
+  const freshSince = 'Julio 2026'
 
   return (
-    <div className="flex flex-col md:flex-row h-dvh w-full overflow-hidden bg-deep font-sans">
-      <main className="order-2 md:order-none flex-1 flex items-center justify-center p-3 md:p-5 overflow-auto bg-grid">
+    <div className="flex flex-col md:flex-row h-dvh w-full overflow-hidden bg-deep font-sans" role="application" aria-label="EditorQR — Editor de códigos QR">
+      <main className="order-2 md:order-none flex-1 flex items-center justify-center p-3 md:p-5 overflow-auto bg-grid" role="region" aria-label="Vista previa del QR" style={{ position: 'relative' }}>
         <QrCanvas ref={canvasRef} />
+        <footer style={{ position: 'absolute', bottom: 8, right: 12, fontSize: 10, color: '#8892A8', opacity: 0.6 }}>
+          {t('ultimaActualizacion', { fecha: freshSince })}
+        </footer>
       </main>
-      <aside className="order-1 md:order-none max-h-[40vh] md:max-h-none md:h-full md:w-[380px] overflow-y-auto shrink-0 p-3 md:p-5 bg-elevated text-text-primary md:border-l border-t md:border-t-0 border-border flex flex-col gap-4">
+      <aside className="order-1 md:order-none max-h-[40vh] md:max-h-none md:h-full md:w-[380px] overflow-y-auto shrink-0 p-3 md:p-5 bg-elevated text-text-primary md:border-l border-t md:border-t-0 border-border flex flex-col gap-4" role="region" aria-label="Controles de personalización">
         <Controls canvasRef={canvasRef} isMobile={isMobile} />
       </aside>
     </div>

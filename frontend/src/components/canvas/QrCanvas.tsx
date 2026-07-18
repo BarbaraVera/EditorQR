@@ -477,7 +477,7 @@ export const QrCanvas = forwardRef<QrCanvasHandle, object>(function QrCanvas(_pr
 
   return (
     <>
-      <div style={{ position: 'relative', display: 'inline-block', overflow: 'hidden', borderRadius: 8 }}>
+      <div style={{ position: 'relative', display: 'inline-block', overflow: 'hidden', borderRadius: 8 }} role="img" aria-label="Vista previa del código QR personalizado">
         <canvas
           ref={canvasElRef}
           width={canvasW}
