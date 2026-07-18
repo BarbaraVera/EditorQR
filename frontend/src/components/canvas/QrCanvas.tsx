@@ -477,14 +477,15 @@ export const QrCanvas = forwardRef<QrCanvasHandle, object>(function QrCanvas(_pr
 
   return (
     <>
-      <div style={{ position: 'relative', display: 'inline-block' }}>
+      <div style={{ position: 'relative', display: 'inline-block', overflow: 'hidden', borderRadius: 8 }}>
         <canvas
           ref={canvasElRef}
           width={canvasW}
           height={canvasH}
           className="max-w-full max-h-full"
-          style={{ border: '1px solid #ccc', borderRadius: 8 }}
+          style={{ border: '1px solid #2A3040', borderRadius: 8, display: 'block' }}
         />
+        <div className="scan-line" />
         {procesandoFondo && (
           <div style={{
             position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -495,7 +496,7 @@ export const QrCanvas = forwardRef<QrCanvasHandle, object>(function QrCanvas(_pr
         )}
       </div>
       {logoAdvertencia && (
-        <p style={{ color: '#f59e0b', fontSize: 12, margin: '6px 0 0', textAlign: 'center' }}>
+        <p style={{ color: '#FFB347', fontSize: 12, margin: '6px 0 0', textAlign: 'center' }}>
           {logoAdvertencia}
         </p>
       )}
