@@ -1,0 +1,79 @@
+{
+  "titulo": "EditorQR",
+  "controles": {
+    "errorArchivoGrande": "File exceeds the 5 MB limit",
+    "colores": {
+      "modulos": "Modules",
+      "esquinas": "Corners",
+      "fondo": "Background"
+    },
+    "forma": {
+      "titulo": "Shape",
+      "opciones": {
+        "redondeado": "Rounded",
+        "cuadrado": "Square",
+        "puntos": "Dots"
+      }
+    },
+    "datos": {
+      "titulo": "QR Data",
+      "vacio": "Enter text or a URL to generate the QR"
+    },
+    "tamanoExportacion": {
+      "titulo": "Export Size",
+      "ancho": "W",
+      "alto": "H"
+    },
+    "fondo": {
+      "titulo": "Background",
+      "patron": "Pattern",
+      "subir": "Upload",
+      "limpiar": "Clear",
+      "opacidad": "Opacity"
+    },
+    "logo": {
+      "titulo": "Logo",
+      "placeholder": "Placeholder",
+      "subir": "Upload",
+      "limpiar": "Clear",
+      "escala": "Scale",
+      "vistaPrevia": "Logo preview",
+      "quitarFondo": "Remove logo background",
+      "procesando": "Processing...",
+      "errorRemocionFondo": "Background removal failed.",
+      "filtros": "Filters",
+      "gris": "Gray",
+      "invertir": "Inv",
+      "brillo": "Bright",
+      "contraste": "Contr"
+    },
+    "capaActiva": {
+      "titulo": "Active Layer",
+      "ninguna": "(none)",
+      "posicion": "pos",
+      "escala": "scale"
+    },
+    "descarga": {
+      "titulo": "Download",
+      "png": "PNG",
+      "jpg": "JPG"
+    },
+    "gradiente": {
+      "activar": "gradient",
+      "tipo": "Type",
+      "rotacion": "Rotation",
+      "lineal": "Linear",
+      "radial": "Radial",
+      "inicial": "Start Color (0%)",
+      "final": "End Color (100%)"
+    }
+  },
+  "ultimaActualizacion": "Updated {{fecha}}",
+  "advertencia": {
+    "logoGrande": "Logo is too large and may affect QR readability"
+  },
+  "selectorIdioma": {
+    "es": "ES",
+    "en": "EN"
+  }
+}
